@@ -1,0 +1,28 @@
+# functions - good
+# Talk about while loops
+# Talk about +=
+
+
+# 
+
+
+UI - User Interface 
+
+---> API (Application Programming Interface)
+---> Database
+
+
+
+bottle:                             
+- type
+    Champagne
+    Wine
+    Rum
+- size:
+    750 ml
+- price:
+    $12
+- distributor:
+
+inventory:
+
