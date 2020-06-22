@@ -1,0 +1,70 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Contact",
+    "type": "object",
+
+    "properties": {
+        "Name": {
+            "type": "string"
+        },
+        "Phonetype_one": {
+            "type":"string",
+            "enum": ["cellphone", "homephone", "workphone"]
+        },
+
+        "Phone_One": {
+            "type": "string"
+            
+        },
+        "Phonetype_two": {
+            "type": "string",
+            "enum": ["cellphone", "homephone", "workphone"]
+        },
+
+        "Phone_Two": {
+            "type": "string",
+            
+        },
+        "Phonetype_three": {
+            "type": "string",
+            "enum": ["cellphone", "homephone", "workphone"]
+        },
+        "Phone_Three": {
+            "type": "string",
+            "enum": ["cellphone", "homephone", "workphone"]
+        },
+        "Home-Name": {
+            "type": "string"
+        },
+        "Home-Street_Number": {
+            "type": "string"
+        },
+        "Home-City": {
+            "type": "string"
+        },
+        "Home-State": {
+            "type": "string"
+        },
+        "Home-Zip": {
+            "type": "string"
+        },
+        "Work-Name": {
+            "type": "string"
+        },
+        "Work-Street_Number": {
+            "type": "string"
+        },
+        "Work-City": {
+            "type": "string"
+        },
+        "Work-State": {
+            "type": "string"
+        },
+        "Work-Zip": {
+            "type": "string"
+        }
+
+    },
+    "required": ["Name", "Phonetype_one","Phone_One"]
+
+}

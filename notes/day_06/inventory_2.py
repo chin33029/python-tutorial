@@ -62,4 +62,3 @@ if __name__ == "__main__":
     first_item['price'] = 1000000.12
     first_item['qty'] = 4
     print(first_item)
-

@@ -1,0 +1,9 @@
+
+
+file sytem
+
+AREAS
+local: One
+stage: Two
+commited: Three  <-- you want to uncommit: git reset --soft HEAD~1 (HARD means also revert back on your local)
+remote:

@@ -96,6 +96,7 @@ def find_by_price_lss(price):
             item_found = True
             item_count += 1
             print(item)
+
     if not item_found:
         print(f'Sorry, did not find any item less than {price:.2f}! ')
     else:

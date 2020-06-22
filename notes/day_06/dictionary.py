@@ -1,3 +1,4 @@
+"""Inventory"""
 INVENTORY = [
     {'id': 0, 'name': 'Stoli', 'type': 'VODKA', 'price': 123.07},
     {'id': 0, 'name': 'Patron', 'type': 'TEQUILA', 'price': 124.97},

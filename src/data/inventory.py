@@ -1,0 +1,3 @@
+INVENTORY = [
+    {'name': 'Stoli'}
+]
