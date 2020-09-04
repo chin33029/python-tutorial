@@ -1,0 +1,40 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Players",
+    "type": "object",
+
+    "properties": {
+        "username": {
+            "type": "string"
+        },
+        "password": {
+            "type": "string"
+        },
+        "diaplayName": {
+            "type":"string"
+        },
+
+        "avatar": {
+            "type": "string" 
+            
+        },
+        "level": {
+            "type": "string",
+            "default": "Beginner",
+            "enum": ["Beginner", "Novice", "Intermediate", "Advanced", "Badass"]
+        },
+
+        "state": {
+            "type": "string",
+            "default": "OFFLINE",
+            "enum": ["IN_LOBBY", "IN_GAME", "OFFLINE"]
+            
+        },
+        "activeGameId": {
+            "type": "string"
+        }    
+    
+    },
+    "required": ["username", "password", "displayName"]
+
+}

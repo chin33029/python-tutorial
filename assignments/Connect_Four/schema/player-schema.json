@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Player",
+    "type": "object",
+
+    "properties": {
+        "playerDisplayName": {
+            "type": "string"
+        },
+        "status": {
+            "type": "string",
+            "enum": ["LOBBY", "OFFLINE", "IN_GAME"]
+        }
+    },
+    "required": ["playerDisplayName"]
+    
+}

@@ -4,10 +4,13 @@
     "type": "object",
 
     "properties": {
-        "Name": {
+        "firstName": {
             "type": "string"
         },
-        "Phonetype_one": {
+        "lastName": {
+            "type": "string"
+        },
+        "phonetypeOne": {
             "type":"string",
             "enum": ["cellphone", "homephone", "workphone"]
         },
@@ -16,22 +19,22 @@
             "type": "string"
             
         },
-        "Phonetype_two": {
+        "phonetypeTwo": {
             "type": "string",
             "enum": ["cellphone", "homephone", "workphone"]
         },
 
         "Phone_Two": {
-            "type": "string",
+            "type": "string"
             
         },
-        "Phonetype_three": {
+        "phonetypeThree": {
             "type": "string",
             "enum": ["cellphone", "homephone", "workphone"]
         },
         "Phone_Three": {
-            "type": "string",
-            "enum": ["cellphone", "homephone", "workphone"]
+            "type": "string"
+            
         },
         "Home-Name": {
             "type": "string"
@@ -65,6 +68,6 @@
         }
 
     },
-    "required": ["Name", "Phonetype_one","Phone_One"]
+    "required": ["firstName", "phonetypeOne", "Phone_One"]
 
 }

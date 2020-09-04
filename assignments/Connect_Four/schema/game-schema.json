@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Game",
+    "type": "object",
+
+    "properties": {
+        
+        "message": {
+            "type": "string"
+        },
+        "winner": {
+            "type": "string"
+        },
+        "playerRed": {
+            "type": "integer"
+        },
+        "playerYellow": {
+            "type": "integer"
+        },
+        "board": {
+            "type": "array"
+        },
+        "playerUp": {
+            "type": "string"
+        },
+        "status": {
+            "type": "string",
+            "enum": ["NOT_STARTED", "WIN", "TIE", "IN_ACTION", "INVALID_PLAYER"]
+        }
+     
+
+        
+        
+
+    },
+    "required": ["winner", "status"]
+    
+}
