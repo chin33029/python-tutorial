@@ -11,10 +11,10 @@
         "winner": {
             "type": "string"
         },
-        "playerRed": {
+        "player_red": {
             "type": "integer"
         },
-        "playerYellow": {
+        "player_yellow": {
             "type": "integer"
         },
         "board": {
@@ -33,6 +33,6 @@
         
 
     },
-    "required": ["winner", "status"]
+    "required": ["winner"]
     
 }

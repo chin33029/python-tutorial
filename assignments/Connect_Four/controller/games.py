@@ -8,9 +8,17 @@ NS = Namespace(
     'games',
     description='Operations related to Games'
 )
+
+PUT_PARSER = reqparse.RequestParser()
 GET_PARSER = reqparse.RequestParser()
+PUT_PARSER.add_argument(
+    "color", default=None,
+    choices=['yellow_player', 'red_player'],
+    required=False,
+    help='Assign player to color'
+)
 GET_PARSER.add_argument(
-    "status", default='NOT_STARTED',
+    "status", default=None,
     choices=['NOT_STARTED', 'WIN', 'TIE',
              'IN_ACTION', 'INVALID_MOVE', 'INVALID_PLAYER'],
     required=True,
@@ -29,17 +37,17 @@ GAME = NS.model(
             default=None,
             example="None"
         ),
-        "playerRed": fields.Integer(
+        "player_yellow": fields.Integer(
+            required=False,
+            descrioption="//refer to player",
+            default=None,
+            example=0
+        ),
+        "player_red": fields.Integer(
             required=False,
             description="//refer to player",
             default=None,
             example=0
-        ),
-        "playerYellow": fields.Integer(
-            required=False,
-            description="//refer to player",
-            default=None,
-            example=0,
         ),
         "playerUp": fields.String(
             required=False,
@@ -51,12 +59,11 @@ GAME = NS.model(
             required=True,
             description="Game status",
             example="NOT_STARTED WIN TIE IN_ACTION INVALID_MOVE INVALID_PLAYER",
-            default="NOT_STARTED"
+            default=None
         ),
     
     }
 )
-
 
 @NS.route("")
 class GamesCollection(Resource):
@@ -91,12 +98,28 @@ class Game(Resource):
         return Games().delete_one(game_id)
 
 
+
+
+
+# @NS.route("/<string:game_id>/<string:color>/<string:player_id>")
+# class GamesPlayer(Resource):
+#     """ Player Assignment """
+#     @NS.doc(parser=PUT_PARSER)
+#     def put(self, game_id, player_id):
+#         """ Assigns PLayer to Color by Player Id"""
+#         args = PUT_PARSER.parse_args()
+#         print("Heeeeeeeeeeeeerrrrrrrrrrrrreeeeeeeeeeee")
+#         return Games().update_game_player(game_id, args["color"], player_id)
+        
+
+
 @NS.route("/<string:game_id>/player-yellow/<string:player_id>")
 class GamesPlayerYellow(Resource):
     """Player Yellow Added to Game Id """
     def put(self, game_id, player_id):
         """ Assigns GameID to Player Yellow """
-        return Games().update_game_player_yellow(game_id, player_id)
+        color = 'player_yellow'
+        return Games().update_game_player(game_id, color, player_id)
 
 
 @NS.route("/<string:game_id>/player-red/<string:player_id>")
@@ -104,7 +127,8 @@ class GamesPlayerRed(Resource):
     """Player Red Added to Gameid """
     def put(self, game_id, player_id):
         """ Assigns GameID to Player Red """
-        return Games().update_game_player_red(game_id, player_id)
+        color = 'player_red'
+        return Games().update_game_player(game_id, color, player_id)
 
 
 @NS.route("/<string:game_id>/player-yellow/player_id/column/<string:column_number>")
@@ -112,6 +136,7 @@ class GamesMovePlayerYellow(Resource):
     """ Player Yellow Move Placement"""
     def put(self, game_id, column_number):
         """ Column Play """
+        color = 'player_yellow'
         try:
             column_number = int(column_number)
         except ValueError:
@@ -123,7 +148,7 @@ class GamesMovePlayerYellow(Resource):
                 'message': f'Column {column_number} is not a valid play! '
             }, 400
         else:
-            return Games().update_player_yellow_move(game_id, column_number)
+            return Games().update_player_move(game_id, color, column_number)
 
 
 @NS.route("/<string:game_id>/player-red/player_id/column/<string:column_number>")
@@ -131,6 +156,7 @@ class GamesMovePlayerRed(Resource):
     """ Player Red Move Placement"""
     def put(self, game_id, column_number):
         """ Column Play """
+        color = 'player_red'
         try:
             column_number = int(column_number)
         except ValueError:
@@ -142,7 +168,7 @@ class GamesMovePlayerRed(Resource):
                 'message': f'Column {column_number} is not a valid play! '
             }, 400
         else:
-            return Games().update_player_red_move(game_id, column_number)
+            return Games().update_player_move(game_id, color, column_number)
 
 
 

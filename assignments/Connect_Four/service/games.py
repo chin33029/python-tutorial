@@ -57,9 +57,7 @@ class Games():
             next_game_id = int(result[0]['game_id']) + 1
         else:
             next_game_id = 0
-        # Sets game id
         payload['game_id'] = next_game_id
-        # payload['board'] = Binary(pickle.dumps(board, protocol=0))
         payload['board'] = board.tolist()
         self.create_turn_counter(payload)
         self.collection.insert_one(payload)
@@ -111,34 +109,15 @@ class Games():
             'message': 'Application defininion passed schema validation'
         }, 200
 
-    def update_game_player_yellow(self, game_id, player_id):
-        """ Assign Player Yellow with Player ID """
-        game_result = self.collection.find_one({'game_id': int(game_id)},
-                                               {'_id': 0})
-        color = 'playerYellow'
-        pstat = self.player_status_chk(player_id)
-        gstat = self.game_status_chk(color, game_id, game_result)
-        if pstat == player_id and gstat == game_id:
-            self.collection.update_one({'game_id': int(game_id)},
-                                       {'$set': {'playerYellow': player_id}})
-            gstat_changer = self.game_status_changer(game_id)
-            return {
-                'message': f'Player {color} has been added by Player Number {player_id}  {gstat_changer}'
-            }, 200
-        return {
-            'game': f"{pstat}   {gstat}"
-        }, 400
-
-    def update_game_player_red(self, game_id, player_id):
+    def update_game_player(self, game_id, color, player_id):
         """ Assign Player Red with Player ID """
         game_result = self.collection.find_one({'game_id': int(game_id)},
                                                {'_id': 0})
-        color = 'playerRed'
         pstat = self.player_status_chk(player_id)
         gstat = self.game_status_chk(color, game_id, game_result)
         if pstat == player_id and gstat == game_id:
             self.collection.update_one({'game_id': int(game_id)},
-                                       {'$set': {'playerRed': player_id}})
+                                       {'$set': {color: player_id}})
 
             gstat_changer = self.game_status_changer(game_id)
             return {
@@ -148,87 +127,42 @@ class Games():
             'game': f"{pstat}   {gstat}"
         }, 400
 
-    def update_player_yellow_move(self, game_id, column_number):
-        """ Updates board with player yellows move """
-        result = self.collection.find_one({'game_id': int(game_id)},
-                                          {'_id': 0})
-        column_number = int(column_number)
-        if result:
-            turn = result['turn_count']
-            if self.turn_chk(turn) is not True:
-                board = result['board']
-                player_id = result['playerYellow']
-                if self.is_valid_location(board, column_number):
-                    row = self.next_open_row(board, column_number)
-                    self.play_drop(board, row, column_number, player_id)
-                    self.collection.update_one({'game_id': int(game_id)},
-                                               {'$set': {'board': board,
-                                                         'playerUp': "Red's Turn"},
-                                                '$inc': {'turn_count': 1}})
-                    self.print_board(board)
-                    if self.win_chk(board, player_id):
-                        self.print_board(board)
-                        print("game over")
 
-                    return{
-                        'message': f'Player {player_id} has moved Player Red is next',
-                        'board': f'{board}',
-                        'turn': f'Thast was {turn} next is {turn + 1}'
-                        }, 200
-                else:
-                    return {
-                        'message': f'Sorry Column {column_number} is full!'
-                    }, 400
-            else:
-                return{
-                    'message': f'Sorry its player Red turn'
-                }, 400
-        else:
-            return{
-                'message': f'Could not find game {game_id}'
-            }, 400
 
-    def update_player_red_move(self, game_id, column_number):
+    def update_player_move(self, game_id, color, column_number):
         """ Updates board with player reds move """  # TODO: has to check for players
         result = self.collection.find_one({'game_id': int(game_id)},
                                           {'_id': 0})
+        player_id = result[color]
         column_number = int(column_number)
-        if result:
-            turn = result['turn_count']
-            if self.turn_chk(turn) is True:
-                board = result['board']
-                player_id = result['playerRed']
-                if self.is_valid_location(board, column_number):
-                    row = self.next_open_row(board, column_number)
-                    self.play_drop(board, row, column_number, player_id)
-                    self.collection.update_one({'game_id': int(game_id)},
-                                               {'$set': {'board': board,
-                                                         'playerUp': "Yellow's Turn"},
-                                                '$inc': {'turn_count': 1}})
+        board = result['board']
+        turn_chk = self.turn_chk(result, color)
+        valid_row = self.is_valid_location(board, column_number)
+        row = self.next_open_row(board, column_number)
+        next_up = self.nextup(color)
+        if turn_chk is True:
+            if valid_row is True:
+                self.play_drop(board, row, column_number, player_id)
+                self.collection.update_one({'game_id': int(game_id)},
+                                           {'$set': {'board': board,
+                                                     'playerUp': next_up},
+                                            '$inc': {'turn_count': 1}})
+                self.print_board(board)
+                print(board)
+                if self.win_chk(board, player_id):
                     self.print_board(board)
-                    if self.win_chk(board, player_id):
-                        self.print_board(board)
-                        print("game over")
-            
-                    return {
-                        'message': f'player {player_id} has moved Player Yellow is Next',
-                        'board': f'{board}',
-                        'turn': f'Thast was {turn} next is {turn + 1}'
-                    }, 200
-                else:
-                    return {
-                        'message': f'Sorry Column {column_number} is full! '
-                    }, 400
-            else:
+                    print("gameover------------")
                 return {
-                    'message': f'Sorry its player Yellows turn'
-                }, 400
+                    'message': f'Player {player_id} has moved {next_up} is next',
+                    'board': f'{board}'
+                }, 200
+                
+            else:
+                return self.is_valid_location(board, column_number)
         else:
-            return{
-                'message': f'Could not find game {game_id}'
-            }, 400
+            return turn_chk
 
-
+        
 
 
             
@@ -238,7 +172,9 @@ class Games():
         if board[5][column_number] == 0:
             return True
         else:
-            return False
+            return {
+                'message': f'Row is full at {column_number} !'
+            }, 400
 
     @staticmethod
     def next_open_row(board, column_number):
@@ -253,33 +189,6 @@ class Games():
         board[row][col] = play
 
     @staticmethod
-    def win_chk(board, play):
-        """ Looks for Win """
-        # check horizontals
-        for c in range(COL_COUNT - 3):
-            for r in range(ROW_COUNT):
-                if board[r][c] == play and board[r][c+1] == play and board[r][c+2] == play and board[r][c+3]:
-                    return True
-        # check verticles
-        for c in range(COL_COUNT):
-            for r in range(ROW_COUNT - 3):
-                if board[r][c] == play and board[r+1][c] == play and board[r+2][c] == play and board[r+3][c]:
-                    return True
-
-        #   check diag bottom left top right
-        for c in range(COL_COUNT - 3):
-            for r in range(ROW_COUNT - 3):
-                if board[r][c] == play and board[r+1][c+1] == play and board[r+2][c+2] == play and board[r+3][c+3]:
-                    return True
-
-        #   check diag top left bottom right
-        for c in range(COL_COUNT - 3):
-            for r in range(3, ROW_COUNT):
-                if board[r][c] == play and board[r-1][c+1] == play and board[r-2][c+2] == play and board[r-3][c+3]:
-                    return True
-
-
-    @staticmethod
     def print_board(board):
         """ Prints Board and flips """
         return (np.flip(board, 0))
@@ -290,15 +199,59 @@ class Games():
         turn_count = random.randint(0, 50)
         payload['turn_count'] = turn_count
         if turn_count % 2 == 0:
-            payload['playerUp'] = "Red goes First! "
-        payload['playerUp'] = "Yellow goes First! "
+            payload['playerUp'] = 'player_red'
+        payload['playerUp'] = 'player_yellow'
    
     @staticmethod
-    def turn_chk(turn):
+    def turn_chk(result, color):
         """Assigns turnchk value """
-        if (turn % 2) == 0:
+        turn = result['playerUp']
+        if color == turn:
             return True
-        return False
+        return {
+            'message': f"Sorry it is {turn}'s turn! "
+        }, 400
+
+    @staticmethod
+    def nextup(color):
+        """ Tracks next Player """
+        if color == 'player_red':
+            return 'player_yellow'
+        if color == 'player_yellow':
+            return 'player_red'
+
+    def game_status_changer(self, game_id):
+        """ Checks for Game Player Vacancy """
+        result = self.get_one(game_id)
+        yellow_stat = int(result['player_yellow'])
+        red_stat = int(result['player_red'])
+        if yellow_stat != 0 and red_stat != 0:
+            self.collection.update_one({'game_id': int(game_id)},
+                                       {'$set': {"status": "IN_ACTION"}})
+            return {
+                'message': f"{yellow_stat} and {red_stat} are now playing"
+            }, 201
+        return {
+            'message': f"Game still needs players"
+        }, 200
+
+    @staticmethod
+    def player_status_chk(player_id):
+        """ Checks player Status to add to game """
+        # Checks if player is in lobby and returns the id if eligible if not returns resp
+        player_result = Players().get_one_player_id(int(player_id))
+        if isinstance(player_result, dict):
+            player_status = player_result['status']
+            if player_status == "LOBBY":
+                Players().collection.update_one({'player_id': int(player_id)},
+                                                {'$set': {"status": "IN_GAME"}})
+                return player_id
+            return {
+                "message": f"Player {player_id} is not eligible to join"
+            }, 400
+        return {
+                "message": f"Player {player_id} could not be found!"
+            }, 400
 
     @staticmethod
     def player_status_chk(player_id):
@@ -334,18 +287,28 @@ class Games():
                 "message": f"Sorry game id {game_id} could not be found!"
             }, 400
 
-    def game_status_changer(self, game_id):
-        """ Checks for Game Player Vacancy """
-        result = self.get_one(game_id)
-        yellow_stat = int(result['playerYellow'])
-        red_stat = int(result['playerRed'])
-        if yellow_stat != 0 and red_stat != 0:
-            self.collection.update_one({'game_id': int(game_id)},
-                                       {'$set': {"status": "IN_ACTION"}})
-            return {
-                'message': f"{yellow_stat} and {red_stat} are now playing"
-            }, 201
-        return {
-            'message': f"Game still needs players"
-        }, 200
-    
+    @staticmethod
+    def win_chk(board, play):
+        """ Looks for Win """
+        # check horizontals
+        for c in range(COL_COUNT - 3):
+            for r in range(ROW_COUNT):
+                if board[r][c] == play and board[r][c+1] == play and board[r][c+2] == play and board[r][c+3]:
+                    return True
+        # check verticles
+        for c in range(COL_COUNT):
+            for r in range(ROW_COUNT - 3):
+                if board[r][c] == play and board[r+1][c] == play and board[r+2][c] == play and board[r+3][c]:
+                    return True
+
+        #   check diag bottom left top right
+        for c in range(COL_COUNT - 3):
+            for r in range(ROW_COUNT - 3):
+                if board[r][c] == play and board[r+1][c+1] == play and board[r+2][c+2] == play and board[r+3][c+3]:
+                    return True
+
+        #   check diag top left bottom right
+        for c in range(COL_COUNT - 3):
+            for r in range(3, ROW_COUNT):
+                if board[r][c] == play and board[r-1][c+1] == play and board[r-2][c+2] == play and board[r-3][c+3]:
+                    return True
