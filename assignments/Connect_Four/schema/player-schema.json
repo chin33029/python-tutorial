@@ -9,7 +9,7 @@
         },
         "status": {
             "type": "string",
-            "enum": ["LOBBY", "OFFLINE", "IN_GAME"]
+            "enum": ["LOBBY", "OFF_LINE", "IN_GAME"]
         }
     },
     "required": ["playerDisplayName"]

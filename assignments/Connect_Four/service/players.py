@@ -43,7 +43,7 @@ class Players():
             )
         if chk_display_name:
             return {
-                'message': f"Display Name {payload['playerDisplayName']} already exists!"
+                'message': f"{payload['playerDisplayName']} already exists!"
             }, 409
 
         resp, code = self.validate_schema(payload)
@@ -54,7 +54,7 @@ class Players():
             {'player_id': {'$ne': None}}, {'_id': 0, 'player_id': 1}
             ).sort('player_id', -1).limit(1))
         if result:
-            next_player_id = int(result[0]['player_id']) + 1
+            next_player_id = float(result[0]['player_id']) + 1
         else:
             next_player_id = 1
         # Sets the player_id

@@ -12,10 +12,10 @@
             "type": "string"
         },
         "player_red": {
-            "type": "integer"
+            "type": "number"
         },
         "player_yellow": {
-            "type": "integer"
+            "type": "number"
         },
         "board": {
             "type": "array"
@@ -25,12 +25,8 @@
         },
         "status": {
             "type": "string",
-            "enum": ["NOT_STARTED", "WIN", "TIE", "IN_ACTION", "INVALID_PLAYER"]
+            "enum": ["NOT_STARTED", "WIN", "TIE", "IN_ACTION"]
         }
-     
-
-        
-        
 
     },
     "required": ["winner"]

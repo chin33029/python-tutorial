@@ -9,19 +9,19 @@ NS = Namespace(
     description='Operations related to Games'
 )
 
-PUT_PARSER = reqparse.RequestParser()
+# PUT_PARSER = reqparse.RequestParser()
 GET_PARSER = reqparse.RequestParser()
-PUT_PARSER.add_argument(
-    "color", default=None,
-    choices=['yellow_player', 'red_player'],
-    required=False,
-    help='Assign player to color'
-)
+# PUT_PARSER.add_argument(
+#     "color", default=None,
+#     choices=['yellow_player', 'red_player'],
+#     required=False,
+#     help='Assign player to color'
+# )
 GET_PARSER.add_argument(
     "status", default=None,
     choices=['NOT_STARTED', 'WIN', 'TIE',
-             'IN_ACTION', 'INVALID_MOVE', 'INVALID_PLAYER'],
-    required=True,
+             'IN_ACTION'],
+    required=False,
     help='Game status fields'
 )
 
@@ -37,13 +37,13 @@ GAME = NS.model(
             default=None,
             example="None"
         ),
-        "player_yellow": fields.Integer(
+        "player_yellow": fields.Float(
             required=False,
             descrioption="//refer to player",
             default=None,
             example=0
         ),
-        "player_red": fields.Integer(
+        "player_red": fields.Float(
             required=False,
             description="//refer to player",
             default=None,
@@ -53,17 +53,17 @@ GAME = NS.model(
             required=False,
             description="lets us know what player is next",
             default=None,
-            example="player yellow or orange"
+            example="player yellow or red"
         ),
         "status": fields.String(
-            required=True,
+            required=False,
             description="Game status",
-            example="NOT_STARTED WIN TIE IN_ACTION INVALID_MOVE INVALID_PLAYER",
+            example="NOT_STARTED WIN TIE IN_ACTION",
             default=None
         ),
-    
     }
 )
+
 
 @NS.route("")
 class GamesCollection(Resource):
@@ -96,21 +96,6 @@ class Game(Resource):
     def delete(self, game_id):
         """ Deletes Game by Id number """
         return Games().delete_one(game_id)
-
-
-
-
-
-# @NS.route("/<string:game_id>/<string:color>/<string:player_id>")
-# class GamesPlayer(Resource):
-#     """ Player Assignment """
-#     @NS.doc(parser=PUT_PARSER)
-#     def put(self, game_id, player_id):
-#         """ Assigns PLayer to Color by Player Id"""
-#         args = PUT_PARSER.parse_args()
-#         print("Heeeeeeeeeeeeerrrrrrrrrrrrreeeeeeeeeeee")
-#         return Games().update_game_player(game_id, args["color"], player_id)
-        
 
 
 @NS.route("/<string:game_id>/player-yellow/<string:player_id>")
@@ -169,6 +154,3 @@ class GamesMovePlayerRed(Resource):
             }, 400
         else:
             return Games().update_player_move(game_id, color, column_number)
-
-
-

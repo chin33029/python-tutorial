@@ -26,7 +26,7 @@ PLAYER = NS.model(
         "status": fields.String(
             required=False,
             description="Players Status",
-            example="OFFLINE, LOBBY, IN_GAME",
+            example="LOBBY, OFF_LINE, IN_GAME",
             default=None
         )
     }
@@ -74,5 +74,3 @@ class PlayerStatus(Resource):
     def put(self, player_id):
         """ Updates Player by player_id """
         return Players().update_one_by_id(player_id, request.json)
-
-
